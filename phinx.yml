@@ -18,18 +18,18 @@ environments:
     development:
         adapter: mysql
         host: localhost
-        name: _insert_development_db_name_here
+        name: voucher
         user: root
-        pass: '_insert_password_here'
+        pass: 'fifi'
         port: 3306
         charset: utf8
 
     testing:
         adapter: mysql
         host: localhost
-        name: testing_db
+        name: voucher
         user: root
-        pass: ''
+        pass: 'fifi'
         port: 3306
         charset: utf8
 
