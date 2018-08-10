@@ -18,9 +18,9 @@ environments:
     development:
         adapter: mysql
         host: localhost
-        name: voucher
+        name: _insert_database_name_here_
         user: root
-        pass: 'fifi'
+        pass: '_insert_password_here_'
         port: 3306
         charset: utf8
 
