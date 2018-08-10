@@ -2,7 +2,7 @@
 
 use App\Controllers\VoucherController;
 
-$app->post('/offers/create', VoucherController::class . ':createOffers');
-$app->post('/voucher/validate', VoucherController::class . ':validateVoucher');
-$app->get('/voucher/list', VoucherController::class . ':fetchAllValidVoucherPerUser');
+$app->post('/api/offers/create', VoucherController::class . ':createOffers');
+$app->post('/api/voucher/validate', VoucherController::class . ':validateVoucher');
+$app->get('/api/voucher/list', VoucherController::class . ':fetchAllValidVoucherPerUser');
 

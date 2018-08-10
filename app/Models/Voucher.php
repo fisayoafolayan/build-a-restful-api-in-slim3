@@ -12,8 +12,9 @@ class Voucher extends Model
         'code',
     ];
 
-    public function create($offer_id, $users_id){
-        //Generate 8 random hex code for voucher
+    public function create($offer_id, $users_id)
+    {
+        // Generate 8 random hex code for voucher
         
         foreach ($users_id as $key => $user_id) {
             $vouchers['voucher'][$key]['code']        =   substr(md5(rand()), 0, 8);
@@ -25,7 +26,7 @@ class Voucher extends Model
 
         return $vouchers;
     }
-    //Assertain that the voucher code belongs to the user and has not expired/not yet used
+    // Assertain that the voucher code belongs to the user and has not expired/not yet used
     public function validateVoucher($voucher, $user_id)
     {    
         $voucher_details = self::leftjoin('users', 'vouchers.user_id', '=', 'users.id')
@@ -54,7 +55,7 @@ class Voucher extends Model
         return $activate_voucher;
  
     }
-    //method to fetch a single user's voucher details
+    // method to fetch a single user's voucher details
     public function fetchSingleUserVoucher($user_id)
     {    
         $voucher_details = self::leftjoin('users', 'vouchers.user_id', '=', 'users.id')
