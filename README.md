@@ -36,7 +36,7 @@ $ vendor/bin/phinx migrate
 ``` 
 Run the application
 ```
-$ php -S localhost:9000
+$ php -S localhost:9000 -t public
 ```
 
 Click [here](https://www.figma.com/file/MRNeeuJIH6Gsgkw8mGp4YVtY/Database-Schema?node-id=0%3A1) to view the Database Schema
