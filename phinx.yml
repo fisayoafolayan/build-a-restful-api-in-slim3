@@ -25,12 +25,6 @@ environments:
         charset: utf8
 
     testing:
-        adapter: mysql
-        host: localhost
-        name: voucher
-        user: root
-        pass: 'fifi'
-        port: 3306
-        charset: utf8
-
+        adapter: sqlite
+        memory: true 
 version_order: creation
