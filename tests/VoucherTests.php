@@ -119,7 +119,7 @@ class VoucherTests extends TestCase
             
     }
 
-    public function testValidateVoucherWithInput() 
+    public function testValidateVoucherValidWithInput() 
     {
         $request = $this->http->post('/api/voucher/validate', [
             'query' => [
@@ -144,7 +144,7 @@ class VoucherTests extends TestCase
         $this->assertArrayHasKey('status',$body);
         $this->assertArrayHasKey('count',$body);
         $this->assertArrayHasKey('data',$body);
-        
+
     }
 
 
