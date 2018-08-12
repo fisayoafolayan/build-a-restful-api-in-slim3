@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+
 class VoucherTests extends TestCase
 {
     public function setUp()
@@ -131,12 +132,6 @@ class VoucherTests extends TestCase
         $this->assertArrayHasKey('data',$body);
     }
 
-
-
-
-    public function tearDown() {
-        unset($this->http);
-    }
 }
 
 
