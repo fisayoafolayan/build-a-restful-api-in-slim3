@@ -14,22 +14,7 @@ class VoucherTests extends TestCase
         $this->http = new GuzzleHttp\Client([
                 'base_uri' => "http://localhost:9000",
                 'exceptions' => false
-            ]);
-
-
-        $pdo = new PDO('sqlite::memory:', null, null, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ]);
-        $configArray["paths"] = [
-            "migrations" => "db/migrations"
-        ];
-        $configArray['environments']['test'] = [
-            'adapter'    => 'sqlite',  
-            'connection' => $pdo
-        ];
-        $config = new Config($configArray);
-        $manager = new Manager($config, new StringInput(' '), new NullOutput());
-        $manager->migrate('test');        
+            ]);       
     }
 
     public function testcreateOfferWithValidInformation() 
@@ -144,7 +129,6 @@ class VoucherTests extends TestCase
         $this->assertArrayHasKey('status',$body);
         $this->assertArrayHasKey('count',$body);
         $this->assertArrayHasKey('data',$body);
-
     }
 
 
