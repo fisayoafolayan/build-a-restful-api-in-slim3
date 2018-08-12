@@ -5,7 +5,7 @@ paths:
 
 environments:
     default_migration_table: phinxlog
-    default_database: development
+    default_database: testing
     production:
         adapter: mysql
         host: localhost
@@ -25,6 +25,11 @@ environments:
         charset: utf8
 
     testing:
-        adapter: sqlite
-        memory: true 
+        adapter: mysql
+        host: localhost
+        name: _insert_database_name_here_
+        user: root
+        pass: '_insert_password_here_'
+        port: 3306
+        charset: utf8
 version_order: creation
