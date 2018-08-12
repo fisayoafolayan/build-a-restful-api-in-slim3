@@ -11,9 +11,13 @@ class VoucherTests extends TestCase
 {
     public function setUp()
     {
-        
+        try {
+            (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
+        } catch (Dotenv\Exception\InvalidPathException $e) {
+            //
+        }
         $this->http = new GuzzleHttp\Client([
-                'base_uri' => "http://localhost:9000",
+                'base_uri' => getenv('APP_URL'),
                 'exceptions' => false
             ]);       
     }
