@@ -5,7 +5,7 @@ paths:
 
 environments:
     default_migration_table: phinxlog
-    default_database: testing
+    default_database: development
     production:
         adapter: mysql
         host: localhost
