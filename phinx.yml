@@ -16,13 +16,9 @@ environments:
         charset: utf8
 
     development:
-        adapter: mysql
-        host: localhost
-        name: _insert_database_name_here_
-        user: root
-        pass: '_insert_password_here_'
-        port: 3306
-        charset: utf8
+        adapter: sqlite
+        name: ./db/database
+        suffix: ".db"    # Defaults to ".sqlite3"
 
     testing:
         adapter: mysql
