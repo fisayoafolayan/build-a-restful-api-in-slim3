@@ -1,5 +1,5 @@
-# Voucher Pool App
-A voucher pool microservice based in PHPSlim 3
+# Build a RESTful API in Slim 3
+A RESTful API based in PHPSlim 3
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -16,7 +16,7 @@ What things you need to install the software.
 ## Install
 Clone the git repository on your computer
 ```
-$ git clone https://github.com/fisayoafolayan/build-a-voucher-pool-api-in-slim3.git
+$ git clone https://github.com/fisayoafolayan/build-a-restful-api-in-slim3.git
 ```
 You can also download the entire repository as a zip file and unpack in on your computer if you do not have git
 
