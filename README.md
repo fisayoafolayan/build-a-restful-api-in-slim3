@@ -1,3 +1,6 @@
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+
+
 # Build a RESTful API in Slim 3
 A RESTful API based in PHPSlim 3. To follow along, this application has been documented as a two-part article on Pusher blog. You can read about it part 1 [here](https://pusher.com/tutorials/rest-api-slim-part-1) and part two [here](https://pusher.com/tutorials/rest-api-slim-part-2)
 
