@@ -4,6 +4,10 @@
 # Build a RESTful API in Slim 3
 A RESTful API based in PHPSlim 3. To follow along, this application has been documented as a two-part article on Pusher blog. You can read about it part 1 [here](https://pusher.com/tutorials/rest-api-slim-part-1) and part two [here](https://pusher.com/tutorials/rest-api-slim-part-2)
 
+## Note
+
+If you are following along using the tutioral, please checkout to the `master` branch. The default branch `refined` was created as an update to the current codebase. It factors in a lot of code refinement/improvements
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
