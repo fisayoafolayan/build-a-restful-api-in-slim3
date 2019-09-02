@@ -20,6 +20,6 @@ abstract class Controller
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->c = $container;
+        $this->container = $container;
     }
 }

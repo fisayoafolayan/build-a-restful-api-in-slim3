@@ -1,2 +1,4 @@
 vendor/
 .env
+.idea/
+db/database.db

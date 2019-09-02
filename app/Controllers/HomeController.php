@@ -10,10 +10,17 @@ use Psr\Http\Message\{
 
 class HomeController extends Controller
 {
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     *
+     * @return mixed
+     */
     public function index(Request $request, Response $response, $args)
     {
-        return $this->c->view->render($response, 'home/index.twig', [
-            'appName' => $this->c->settings['app']['name'],
+        return $this->container->view->render($response, 'home/index.twig', [
+            'appName' => $this->container->settings['app']['name'],
         ]);
     }
 }

@@ -9,20 +9,27 @@ class Offer extends Model
 {
     use SoftDeletes;
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'name', 'discount', 'expires_at'
     ];
 
+    /**
+     * @param $request
+     *
+     * @return mixed
+     */
     public function create($request)
     {
-        
-        $created_offer = self::firstOrCreate([
+        $createdOffer = self::firstOrCreate([
             'name'          => $request->getParam('name'),
             'discount'      => $request->getParam('discount'),
             'expires_at'    => $request->getParam('expires_at')
         ]);
         
-        return $created_offer;
+        return $createdOffer;
     }
 
 }

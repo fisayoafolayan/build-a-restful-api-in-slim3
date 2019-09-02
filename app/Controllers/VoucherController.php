@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\Offer;
 use App\Models\User;
 use App\Models\Voucher;
+use App\Models\VoucherResponseConstants;
 use App\Helpers\Validator;
 use Psr\Http\Message\{
     ServerRequestInterface as Request,
@@ -13,10 +14,18 @@ use Psr\Http\Message\{
 
 class VoucherController extends Controller
 {
-    public function createOffers(Request $request, Response $response, $args)
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     *
+     * @return mixed
+     */
+    public function createOffers(Request $request, Response $response)
     {
+
         // checks to ensure we have valid inputs
-        $validator = $this->c->validator->validate($request, [
+        $validator = $this->container->validator->validate($request, [
             'email_list' => Validator::arrayType(),
             'expires_at' => Validator::date()->notBlank(),
             'name' => Validator::alnum("'-_")->notBlank(),
@@ -24,46 +33,54 @@ class VoucherController extends Controller
         ]);
 
         if ($validator->isValid()) {
-            $offer_model = new Offer();
-            $voucher_model = new Voucher();
-            $user_model = new User();
+            $offerModel = new Offer();
+            $voucherModel = new Voucher();
+            $voucherCodes = [];
 
             if (Validator::validateEmails($request->getParam('email_list'))) {
                 // Create new offer
-                $created_offer = $offer_model->create($request);
+                $createNewOffer = $offerModel->create($request);
                
             }
             else {
                 return $response->withStatus(400)->withJson([
-                    'status' => 'Error',
-                    'message' => 'One or more emails invalid'
+                    'status' => VoucherResponseConstants::ERROR_STATUS,
+                    'message' => VoucherResponseConstants::INVALID_EMAIL
                 ]);
             }
 
-            if ($created_offer) {
+            if ($createNewOffer) {
                 // get id of users from the email, if email does not exist, create the user and return users_id
-                $get_user_user_ids  =   $user_model->findMultipleEmail($request->getParam('email_list'));
-                $voucher_codes      =   $voucher_model->create($created_offer->id, $get_user_user_ids );
+                $getUserIds  =  User::findMultipleEmail($request->getParam('email_list'));
+                $voucherCodes =  $voucherModel->create($createNewOffer->id, $getUserIds);
             }    
 
             return $response->withStatus(201)->withJson([
-                'status' => 'Success',
-                'offer_details'     => $created_offer,
-                'voucher_details'   => $voucher_codes,
-                'message' => $created_offer ? 'Offer Created' : 'Error Creating Offer'
-            ]);
-        } else {
-            // return an error on failed validation, with a statusCode of 400
-            return $response->withStatus(400)->withJson([
-                'status' => 'Validation Error',
-                'message' => $validator->getErrors()
+                'status'  => VoucherResponseConstants::SUCCESS_STATUS,
+                'offer_details'  => $createNewOffer,
+                'voucher_details'  => $voucherCodes,
+                'message'  => $createNewOffer ? VoucherResponseConstants::OFFER_CREATED
+                    : VoucherResponseConstants::ERROR_CREATING_OFFER
             ]);
         }
+        // return an error on failed validation, with a statusCode of 400
+        return $response->withStatus(400)->withJson([
+            'status'  => VoucherResponseConstants::VALIDATION_ERROR,
+            'message'  => $validator->getErrors()
+        ]);
+
     }
 
-    public function validateVoucher(Request $request, Response $response, $args)
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     *
+     * @return mixed
+     */
+    public function validateVoucher(Request $request, Response $response)
     {
-        $validator = $this->c->validator->validate($request, [
+        $validator = $this->container->validator->validate($request, [
             'voucher' => Validator::alnum()->notBlank(),
             'email' => Validator::email()->noWhitespace()->notBlank(),
         ]);
@@ -72,53 +89,54 @@ class VoucherController extends Controller
 
             $voucher    = $request->getParam('voucher');
             $email      = $request->getParam('email');
-
-            $voucher_model    =   new Voucher();
-            $user_model       =   new User();
+            $voucherModel    =   new Voucher();
 
             // check if user exist
-            $user_details     =   $user_model->findEmail($email);
+            $userDetails     =   User::findEmail($email);
 
-            if ($user_details) {
-                // Assertain that the voucher code belongs to the user and has not expired/not yet used
-                $validate_voucher =   $voucher_model->validateVoucher($voucher, $user_details->id);
-                
-                if (!$validate_voucher->isEmpty()) {
+            if ($userDetails) {
+                // Ensure that the voucher code belongs to the user and has not expired/not yet used
+                $validateVoucher =   $voucherModel->validateVoucher($voucher, $userDetails->id);
+                if (!$validateVoucher->isEmpty()) {
                     // activate and set date voucher was used
-                    $activate_voucher   =   $voucher_model->activateVoucher($voucher, $user_details->id);
+                    $voucherModel->activateVoucher($voucher, $userDetails->id);
                     // return voucher details
                     return $response->withStatus(200)->withJson([
-                        'status'    => (bool) $validate_voucher,
-                        'count'     => count($validate_voucher),
-                        'data'      => $validate_voucher,
-                        'message'   => count($validate_voucher) >= 1 ? 'Success': 'No Voucher found'
-                    ]);
-                } else {
-                    // return failure message if voucher does not exist
-                     return $response->withStatus(403)->withJson([
-                    'status' => 'Error',
-                    'message' => 'Voucher details is invalid'
+                        'status'    => (bool) $validateVoucher,
+                        'count'     => count($validateVoucher),
+                        'data'      => $validateVoucher,
+                        'message'   => count($validateVoucher) >= 1 ? VoucherResponseConstants::SUCCESS_STATUS
+                            : VoucherResponseConstants::INVALID_VOUCHER_DETAILS
                     ]);
                 }
-            } else {
-                // return failure message if user does not exist
-                 return $response->withStatus(400)->withJson([
-                    'status' => 'Error',
-                    'message' => 'User does not exist'
-                    ]);
+                // return failure message if voucher does not exist
+                 return $response->withStatus(403)->withJson([
+                    'status' => VoucherResponseConstants::ERROR_STATUS,
+                    'message' => VoucherResponseConstants::INVALID_VOUCHER_DETAILS
+                ]);
             }
-        } else {
-            // return failure message if validation fails
-            return $response->withStatus(400)->withJson([
-                'status' => 'Validation Error',
-                'message' => $validator->getErrors()
-            ]);
+            // return failure message if user does not exist
+             return $response->withStatus(400)->withJson([
+                'status' => VoucherResponseConstants::ERROR_STATUS,
+                'message' => VoucherResponseConstants::USER_DOES_NOT_EXIST
+             ]);
         }
+        // return failure message if validation fails
+        return $response->withStatus(400)->withJson([
+            'status' =>  VoucherResponseConstants::VALIDATION_ERROR,
+            'message' => $validator->getErrors()
+        ]);
     }
 
-    public function fetchAllValidVoucherPerUser(Request $request, Response $response, $args)
+    /**
+     * @param Request $request
+     * @param Response $response
+     *
+     * @return mixed
+     */
+    public function fetchAllValidVoucherPerUser(Request $request, Response $response)
     {
-        $validator = $this->c->validator->validate($request, [
+        $validator = $this->container->validator->validate($request, [
             'email' => Validator::email()->noWhitespace()->notBlank(),
         ]);
 
@@ -126,36 +144,32 @@ class VoucherController extends Controller
 
             $email = $request->getQueryParam('email');
 
-            $voucher_model    =   new Voucher();
-            $user_model       =   new User();
+            $voucherModel    =   new Voucher();
 
             //check if user exist
-            $user_details     =   $user_model->findEmail($email);
+            $userDetails     =   User::findEmail($email);
 
-            if ($user_details) {
-
+            if ($userDetails) {
                 //Fetch all valid user voucher codes
-                $users_voucher =   $voucher_model->fetchSingleUserVoucher($user_details->id);
-
+                $usersVoucher =   $voucherModel->fetchSingleUserVoucher($userDetails->id);
                 //return voucher details
                     return $response->withStatus(200)->withJson([
-                        'status' => (bool) $users_voucher,
-                        'count'     => count($users_voucher),
-                        'data'     => $users_voucher
+                        'status'  => (bool) $usersVoucher,
+                        'count' => count($usersVoucher),
+                        'data'  => $usersVoucher
                     ]);
 
-            } else {
-                //return failure message if user does not exist
-                return $response->withStatus(400)->withJson([
-                    'status' => 'Error',
-                    'message' => 'User does not exist'
-                    ]);
             }
-        } else {
+            //return failure message if user does not exist
             return $response->withStatus(400)->withJson([
-                'status' => 'Validation Error',
-                'message' => $validator->getErrors()
-            ]);
+                'status' => VoucherResponseConstants::ERROR_STATUS,
+                'message' => VoucherResponseConstants::USER_DOES_NOT_EXIST
+                ]);
         }
+        return $response->withStatus(400)->withJson([
+            'status' => VoucherResponseConstants::VALIDATION_ERROR,
+            'message' => $validator->getErrors()
+        ]);
+
     }
 }
